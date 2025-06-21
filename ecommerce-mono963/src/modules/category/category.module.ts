@@ -1,14 +1,17 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { CategoriesController } from './category.controller';
 import { CategoriesService } from './category.service';
-import { CategoriesRepository } from './category.repository';
+import { AuthsModule } from '../auths/auths.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category])],
+  imports: [
+    TypeOrmModule.forFeature([Category]),
+    forwardRef(() => AuthsModule),
+  ],
   controllers: [CategoriesController],
-  providers: [CategoriesService, CategoriesRepository],
+  providers: [CategoriesService],
   exports: [CategoriesService],
 })
 export class CategoriesModule {}

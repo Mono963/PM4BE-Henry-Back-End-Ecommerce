@@ -18,14 +18,21 @@ import {
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDto } from './Dto/products.Dto';
-import { AuthGuard } from '../auths/auth.gurds';
+import { AuthGuard } from '../../guards/auth.guards';
+import { RoleGuard } from 'src/guards/auth.guards.admin';
+import { Roles } from 'src/decorator/role.decorator';
+import { UserRole } from '../user/Entities/user.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiBearerAuth()
   @Get()
   @HttpCode(200)
+  @UseGuards(AuthGuard)
   async getProducts(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
@@ -40,8 +47,11 @@ export class ProductsController {
     }
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @HttpCode(200)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   async getProductById(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const product = await this.productsService.getProductById(id);
@@ -55,8 +65,11 @@ export class ProductsController {
     }
   }
 
+  @ApiBearerAuth()
   @Post('seeder')
   @HttpCode(201)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   async seedProducts() {
     try {
       return await this.productsService.seedProducts();
@@ -68,9 +81,11 @@ export class ProductsController {
     }
   }
 
+  @ApiBearerAuth()
   @Post()
   @HttpCode(201)
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async createProduct(@Body() dto: CreateProductDto) {
     try {
@@ -81,9 +96,11 @@ export class ProductsController {
     }
   }
 
+  @ApiBearerAuth()
   @Put(':id')
   @HttpCode(200)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateProduct(
     @Param('id', ParseUUIDPipe) id: string,
@@ -99,9 +116,11 @@ export class ProductsController {
     }
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   @HttpCode(200)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   async deleteProduct(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const deleted = await this.productsService.deleteProduct(id);

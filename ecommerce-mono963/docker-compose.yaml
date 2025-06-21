@@ -1,0 +1,20 @@
+version: '4.41.2'
+
+services:
+  nestapp:
+    build: ./
+    ports:
+      - '3001:3000'
+    env_file:
+      - .env.development
+    depends_on:
+      - postgresdb
+  postgresdb:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env.development
+
+volumes:
+  pgdata:

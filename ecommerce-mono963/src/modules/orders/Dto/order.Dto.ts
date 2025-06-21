@@ -5,18 +5,22 @@ import {
   ArrayNotEmpty,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
 class ProductIdDto {
-  @IsUUID('4', { message: 'El ID del producto debe ser un UUID válido' })
+  @ApiProperty()
+  @IsUUID()
   id: string;
 }
 
 export class CreateOrderDto {
-  @IsUUID('4', { message: 'El userId debe ser un UUID válido' })
+  @ApiProperty()
+  @IsUUID()
   userId: string;
 
-  @IsArray({ message: 'El campo products debe ser un arreglo' })
-  @ArrayNotEmpty({ message: 'Debe haber al menos un producto en la orden' })
+  @ApiProperty()
+  @IsArray()
+  @ArrayNotEmpty()
   @ValidateNested({ each: true })
   @Type(() => ProductIdDto)
   products: ProductIdDto[];

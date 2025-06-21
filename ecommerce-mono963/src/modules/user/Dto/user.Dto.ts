@@ -6,90 +6,91 @@ import {
   MinLength,
   MaxLength,
   Matches,
+  IsEnum,
 } from 'class-validator';
-import { User } from '../Entities/user.entity';
+import { User, UserRole } from '../Entities/user.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
-  @IsString()
-  @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres' })
-  @MaxLength(80, { message: 'El nombre no debe superar los 80 caracteres' })
-  name: string;
-
-  @IsEmail({}, { message: 'El email debe tener un formato válido' })
-  email: string;
-
-  @IsString()
-  @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres' })
-  @MaxLength(15, { message: 'La contraseña no debe superar los 15 caracteres' })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/, {
-    message:
-      'La contraseña debe tener al menos una minúscula, una mayúscula, un número y un carácter especial (!@#$%^&*)',
-  })
-  password: string;
-
-  @IsString()
-  @MinLength(3, { message: 'La dirección debe tener al menos 3 caracteres' })
-  @MaxLength(80, { message: 'La dirección no debe superar los 80 caracteres' })
-  address: string;
-
-  @IsNumber()
-  phone: number;
-
-  @IsOptional()
-  @IsString()
-  @MinLength(5, { message: 'El país debe tener al menos 5 caracteres' })
-  @MaxLength(20, { message: 'El país no debe superar los 20 caracteres' })
-  country?: string;
-
-  @IsOptional()
-  @IsString()
-  @MinLength(5, { message: 'La ciudad debe tener al menos 5 caracteres' })
-  @MaxLength(20, { message: 'La ciudad no debe superar los 20 caracteres' })
-  city?: string;
-}
-
-export class UpdateUserDto {
-  @IsOptional()
+  @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
   @MinLength(3)
   @MaxLength(80)
+  name: string;
+
+  @ApiProperty({ example: 'juan@example.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: 'MiC0ntra$eña' })
+  @IsString()
+  password: string;
+
+  @ApiProperty({ example: 'Av. Siempre Viva 742' })
+  @IsString()
+  address: string;
+
+  @ApiProperty({ example: 1134567890 })
+  @IsNumber()
+  phone: number;
+
+  @ApiPropertyOptional({ example: 'Argentina' })
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @ApiPropertyOptional({ example: 'Buenos Aires' })
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @ApiPropertyOptional({ enum: UserRole, default: UserRole.USER })
+  @IsOptional()
+  @IsEnum(UserRole)
+  role?: UserRole;
+}
+
+export class UpdateUserDto {
+  @ApiPropertyOptional({ example: 'Juan Actualizado' })
+  @IsOptional()
+  @IsString()
   name?: string;
 
+  @ApiPropertyOptional({ example: 'nuevo@email.com' })
   @IsOptional()
   @IsEmail()
   email?: string;
 
+  @ApiPropertyOptional({ example: 'NuevaC0ntra$eña' })
   @IsOptional()
   @IsString()
   @MinLength(8)
-  @MaxLength(15)
+  @MaxLength(255)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/)
   password?: string;
 
+  @ApiPropertyOptional({ example: 'Calle 123' })
   @IsOptional()
   @IsString()
-  @MinLength(3)
-  @MaxLength(80)
   address?: string;
 
+  @ApiPropertyOptional({ example: 1122334455 })
   @IsOptional()
   @IsNumber()
   phone?: number;
 
+  @ApiPropertyOptional({ example: 'Chile' })
   @IsOptional()
   @IsString()
-  @MinLength(5)
-  @MaxLength(20)
   country?: string;
 
+  @ApiPropertyOptional({ example: 'Santiago' })
   @IsOptional()
   @IsString()
-  @MinLength(5)
-  @MaxLength(20)
   city?: string;
 }
 
-export interface IUserResponsDto {
+export interface IUserResponseDto {
   id: string;
   name: string;
   email: string;
@@ -100,8 +101,8 @@ export interface IUserResponsDto {
   orders: { id: string; date: Date }[];
 }
 
-export class ResponseProductsDto {
-  static toDTO(user: User): IUserResponsDto {
+export class ResponseUserDto {
+  static toDTO(user: User): IUserResponseDto {
     return {
       id: user.id,
       name: user.name,
@@ -118,7 +119,24 @@ export class ResponseProductsDto {
     };
   }
 
-  static toDTOList(users: User[]): IUserResponsDto[] {
+  static toDTOList(users: User[]): IUserResponseDto[] {
+    return users.map((user) => this.toDTO(user));
+  }
+}
+
+export interface IUserResponseWithRoleDto extends IUserResponseDto {
+  role: UserRole;
+}
+
+export class ResponseUserWithRoleDto {
+  static toDTO(user: User): IUserResponseWithRoleDto {
+    return {
+      ...ResponseUserDto.toDTO(user),
+      role: user.role,
+    };
+  }
+
+  static toDTOList(users: User[]): IUserResponseWithRoleDto[] {
     return users.map((user) => this.toDTO(user));
   }
 }

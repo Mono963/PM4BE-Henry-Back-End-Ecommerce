@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './Entities/user.entity';
+import { User, UserRole } from './Entities/user.entity';
 import { Repository } from 'typeorm';
 import {
   CreateUserDto,
   UpdateUserDto,
-  IUserResponsDto,
-  ResponseProductsDto,
+  IUserResponseDto,
+  ResponseUserDto,
 } from './Dto/user.Dto';
 
 @Injectable()
@@ -16,22 +16,18 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async getUsers(page?: number, limit?: number): Promise<IUserResponsDto[]> {
-    let users: User[];
-
+  async getUsers(page?: number, limit?: number): Promise<User[]> {
     if (page && limit) {
-      users = await this.userRepository.find({
+      return this.userRepository.find({
         skip: (page - 1) * limit,
         take: limit,
       });
     } else {
-      users = await this.userRepository.find();
+      return this.userRepository.find();
     }
-
-    return ResponseProductsDto.toDTOList(users);
   }
 
-  async getUserServiceById(id: string): Promise<IUserResponsDto | null> {
+  async getUserServiceById(id: string): Promise<User | null> {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.orders', 'order')
@@ -51,30 +47,38 @@ export class UserService {
 
     if (!user) return null;
 
-    return ResponseProductsDto.toDTO(user);
+    return user;
   }
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { email },
-      select: ['id', 'name', 'email', 'password'], // ¡Incluí password!
+      select: ['id', 'name', 'email', 'password'],
     });
   }
 
-  async createUserService(dto: CreateUserDto): Promise<IUserResponsDto> {
-    const user = this.userRepository.create(dto);
-    const savedUser = await this.userRepository.save(user);
-    return ResponseProductsDto.toDTO(savedUser);
+  async createUserService(dto: CreateUserDto): Promise<IUserResponseDto> {
+    const userEntity = this.userRepository.create({
+      ...dto,
+      role: UserRole.USER,
+    });
+    const savedUser = await this.userRepository.save(userEntity);
+    return ResponseUserDto.toDTO(savedUser);
   }
 
   async updateUserService(
-    id: number | string,
+    id: string,
     dto: Partial<UpdateUserDto>,
-  ): Promise<IUserResponsDto> {
-    await this.userRepository.update({ id: String(id) }, dto);
-    const updatedUser = await this.userRepository.findOneBy({ id: String(id) });
+  ): Promise<IUserResponseDto> {
+    if ('role' in dto) delete dto.role;
+
+    await this.userRepository.update({ id }, dto);
+    const updatedUser = await this.userRepository.findOne({
+      where: { id },
+      relations: ['orders'],
+    });
     if (!updatedUser) throw new Error(`Usuario con id ${id} no encontrado`);
-    return ResponseProductsDto.toDTO(updatedUser);
+    return ResponseUserDto.toDTO(updatedUser);
   }
 
   async deleteUserService(id: number | string): Promise<{ id: string }> {

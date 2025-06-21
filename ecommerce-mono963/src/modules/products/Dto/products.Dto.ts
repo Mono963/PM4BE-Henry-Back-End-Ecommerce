@@ -1,55 +1,60 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNumber, IsOptional, Min, Length } from 'class-validator';
 import { ResponseFileDto } from 'src/modules/file/dto/file.Dto';
 
 export class CreateProductDto {
-  @IsString({ message: 'El nombre debe ser una cadena de texto' })
-  @Length(3, 80, { message: 'El nombre debe tener entre 3 y 80 caracteres' })
+  @ApiProperty({ example: 'Remera básica' })
+  @IsString()
+  @Length(3, 80)
   name: string;
 
-  @IsString({ message: 'La descripción debe ser una cadena de texto' })
-  @Length(10, 500, {
-    message: 'La descripción debe tener entre 10 y 500 caracteres',
-  })
+  @ApiProperty({ example: 'Remera de algodón 100%' })
+  @IsString()
+  @Length(10, 500)
   description: string;
 
-  @IsNumber({}, { message: 'El precio debe ser un número' })
-  @Min(0.01, { message: 'El precio debe ser mayor a 0' })
+  @ApiProperty({ example: 49.99 })
+  @IsNumber()
+  @Min(0.01)
   price: number;
 
-  @IsNumber({}, { message: 'El stock debe ser un número' })
-  @Min(0, { message: 'El stock no puede ser negativo' })
+  @ApiProperty({ example: 100 })
+  @IsNumber()
+  @Min(0)
   stock: number;
 
-  @IsString({
-    message: 'El nombre de la categoría debe ser una cadena de texto',
-  })
-  @Length(3, 50, {
-    message: 'El nombre de la categoría debe tener entre 3 y 50 caracteres',
-  })
+  @ApiProperty({ example: 'Ropa' })
+  @IsString()
+  @Length(3, 50)
   categoryName: string;
 }
 
 export class UpdateProductDto {
+  @ApiPropertyOptional({ example: 'Remera negra' })
   @IsOptional()
   @IsString()
   @Length(3, 80)
   name?: string;
 
+  @ApiPropertyOptional({ example: 'Remera negra de manga larga' })
   @IsOptional()
   @IsString()
   @Length(10, 500)
   description?: string;
 
+  @ApiPropertyOptional({ example: 59.99 })
   @IsOptional()
   @IsNumber()
   @Min(0.01)
   price?: number;
 
+  @ApiPropertyOptional({ example: 50 })
   @IsOptional()
   @IsNumber()
   @Min(0)
   stock?: number;
 
+  @ApiPropertyOptional({ example: 'Invierno' })
   @IsOptional()
   @IsString()
   @Length(3, 50)

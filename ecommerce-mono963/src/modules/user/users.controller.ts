@@ -6,42 +6,55 @@ import {
   HttpCode,
   Param,
   ParseUUIDPipe,
-  Post,
   Put,
   Query,
-  Req,
   UseGuards,
-  UseInterceptors,
   UsePipes,
   ValidationPipe,
   NotFoundException,
   BadRequestException,
   InternalServerErrorException,
+  Req,
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { DateAdderInterceptor } from 'src/interceptors/date-adder.interceptor';
-import { RequestWithDate } from './interface/extended-request';
-import { CreateUserDto, UpdateUserDto } from './Dto/user.Dto';
-import { AuthGuard } from '../auths/auth.gurds';
+import {
+  ResponseUserDto,
+  ResponseUserWithRoleDto,
+  UpdateUserDto,
+} from './Dto/user.Dto';
+import { AuthGuard } from 'src/guards/auth.guards';
+import { Request } from 'express';
+import { RoleGuard } from 'src/guards/auth.guards.admin';
+import { UserRole } from './Entities/user.entity';
+import { Roles } from 'src/decorator/role.decorator';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiBearerAuth()
   @Get()
   @HttpCode(200)
-  @UseGuards(AuthGuard)
-  async getUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
+  async getUsersRole(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
     try {
       const pageNumber = page ? Number(page) : undefined;
       const limitNumber = limit ? Number(limit) : undefined;
-      return await this.userService.getUsers(pageNumber, limitNumber);
+      const users = await this.userService.getUsers(pageNumber, limitNumber);
+      return ResponseUserWithRoleDto.toDTOList(users);
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException('Error al obtener los usuarios');
     }
   }
 
+  @ApiBearerAuth()
   @Get(':id')
   @HttpCode(200)
   @UseGuards(AuthGuard)
@@ -49,7 +62,7 @@ export class UsersController {
     try {
       const user = await this.userService.getUserServiceById(id);
       if (!user) throw new NotFoundException('Usuario no encontrado');
-      return user;
+      return ResponseUserDto.toDTO(user);
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new BadRequestException(
@@ -58,24 +71,17 @@ export class UsersController {
     }
   }
 
-  @Post()
-  @UseInterceptors(DateAdderInterceptor)
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  @HttpCode(201)
-  async createUser(@Body() user: CreateUserDto, @Req() req: RequestWithDate) {
-    try {
-      console.log('Endpoint:', req.now);
-      return await this.userService.createUserService(user);
-    } catch (error) {
-      console.error(error);
-      throw new BadRequestException('Error al crear el usuario');
-    }
+  @Get('auth0')
+  getAuth0protectec(@Req() req: Request) {
+    console.log(req.oidc);
+    return JSON.stringify(req.oidc.user);
   }
 
+  @ApiBearerAuth()
   @Put(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   @HttpCode(200)
   @UseGuards(AuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateData: Partial<UpdateUserDto>,
@@ -90,6 +96,7 @@ export class UsersController {
     }
   }
 
+  @ApiBearerAuth()
   @Delete(':id')
   @HttpCode(200)
   @UseGuards(AuthGuard)

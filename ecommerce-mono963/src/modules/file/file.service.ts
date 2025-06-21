@@ -1,16 +1,22 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { v2 as CloudinaryType } from 'cloudinary';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Readable } from 'stream';
 import { ProductsService } from '../products/products.service';
-import { FileRepository } from './file.repository';
+import { File } from './entities/file.entity';
 import { CloudinaryUploadResult } from './interface/file.interface';
 
 @Injectable()
 export class FileService {
   constructor(
     private readonly productService: ProductsService,
-    private readonly fileRepository: FileRepository,
-    @Inject('CLOUDINARY') private readonly cloudinary: typeof CloudinaryType,
+
+    @InjectRepository(File)
+    private readonly fileRepo: Repository<File>,
+
+    @Inject('CLOUDINARY')
+    private readonly cloudinary: typeof CloudinaryType,
   ) {}
 
   async uploadImage(
@@ -48,13 +54,13 @@ export class FileService {
 
       console.log('[uploadImage] Imagen subida:', result.secure_url);
 
-      const image = this.fileRepository.create({
+      const image = this.fileRepo.create({
         url: result.secure_url,
         mimeType: file.mimetype,
         product,
       });
 
-      await this.fileRepository.save(image);
+      await this.fileRepo.save(image);
 
       return { id: image.id, url: image.url };
     } catch (err) {

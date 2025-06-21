@@ -1,12 +1,16 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
-import { CategoriesRepository } from './category.repository';
-import { PRODUCTS_SEED } from '../products/data/products.data';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { PRODUCTS_SEED } from '../products/data/products.data';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly categoriesRepository: CategoriesRepository) {}
+  constructor(
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>,
+  ) {}
 
   async preloadCategories(): Promise<{ message: string }> {
     const uniqueCategoryNames = new Set<string>();
@@ -18,7 +22,7 @@ export class CategoriesService {
       if (uniqueCategoryNames.has(name)) continue;
       uniqueCategoryNames.add(name);
 
-      const exists = await this.categoriesRepository.findByName(name);
+      const exists = await this.findByName(name);
       if (!exists) {
         const newCategory = new Category();
         newCategory.categoryName = name;
@@ -27,7 +31,7 @@ export class CategoriesService {
     }
 
     if (categoriesToInsert.length > 0) {
-      await this.categoriesRepository.addCategories(categoriesToInsert);
+      await this.categoryRepo.save(categoriesToInsert);
       return { message: 'Categorías precargadas correctamente' };
     }
 
@@ -35,15 +39,15 @@ export class CategoriesService {
   }
 
   async getCategories(): Promise<Category[]> {
-    return this.categoriesRepository.getCategories();
+    return this.categoryRepo.find({ relations: ['products'] });
   }
 
   async findByName(categoryName: string): Promise<Category | null> {
-    return this.categoriesRepository.findByName(categoryName);
+    return this.categoryRepo.findOneBy({ categoryName });
   }
 
   async createCategory(dto: CreateCategoryDto): Promise<Category> {
-    const exists = await this.categoriesRepository.findByName(dto.categoryName);
+    const exists = await this.findByName(dto.categoryName);
     if (exists) {
       throw new HttpException(
         `La categoría "${dto.categoryName}" ya existe`,
@@ -51,9 +55,9 @@ export class CategoriesService {
       );
     }
 
-    const category = new Category();
-    category.categoryName = dto.categoryName;
-
-    return this.categoriesRepository.addNewCategories(category);
+    const category = this.categoryRepo.create({
+      categoryName: dto.categoryName,
+    });
+    return this.categoryRepo.save(category);
   }
 }

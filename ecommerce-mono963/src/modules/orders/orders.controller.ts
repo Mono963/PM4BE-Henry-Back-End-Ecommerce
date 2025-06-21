@@ -10,16 +10,22 @@ import {
   BadRequestException,
   NotFoundException,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './Dto/order.Dto';
+import { AuthGuard } from 'src/guards/auth.guards';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Order')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  @ApiBearerAuth()
   @Post()
   @HttpCode(201)
+  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
     try {
@@ -32,7 +38,9 @@ export class OrdersController {
     }
   }
 
+  @ApiBearerAuth()
   @Get(':id')
+  @UseGuards(AuthGuard)
   async getOrderById(@Param('id', ParseUUIDPipe) id: string) {
     try {
       const order = await this.ordersService.getOrder(id);

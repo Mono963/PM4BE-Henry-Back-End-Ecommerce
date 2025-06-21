@@ -2,15 +2,19 @@ import { forwardRef, Module } from '@nestjs/common';
 import { FileService } from './file.service';
 import { FileController } from './file.controller';
 import { ProductsModule } from '../products/products.module';
-import { FileRepository } from './file.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { File } from './entities/file.entity';
 import { CloudinaryProvider } from 'src/config/cloudinary';
+import { AuthsModule } from '../auths/auths.module';
 
 @Module({
-  imports: [forwardRef(() => ProductsModule), TypeOrmModule.forFeature([File])],
+  imports: [
+    forwardRef(() => ProductsModule),
+    TypeOrmModule.forFeature([File]),
+    forwardRef(() => AuthsModule),
+  ],
   controllers: [FileController],
-  providers: [FileService, FileRepository, CloudinaryProvider],
+  providers: [FileService, CloudinaryProvider],
   exports: [FileService],
 })
 export class FileModule {}

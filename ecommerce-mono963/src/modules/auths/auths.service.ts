@@ -29,6 +29,8 @@ export class AuthsService {
       throw new BadRequestException('Credenciales inválidas');
     }
 
+    console.log('User isAdmin:', user.isAdmin);
+
     const payload = {
       sub: user.id,
       email: user.email,

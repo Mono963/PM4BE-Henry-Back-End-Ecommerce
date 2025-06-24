@@ -7,9 +7,10 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+
 import { AuthsService } from './auths.service';
 import { SignInDto, SignUpDto } from './Dto/auths.Dto';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -18,6 +19,7 @@ export class AuthsController {
 
   @Post('signin')
   @HttpCode(200)
+  @ApiBody({ type: SignInDto })
   async signin(@Body() credentials: SignInDto) {
     try {
       return await this.authService.signin(
@@ -25,7 +27,7 @@ export class AuthsController {
         credentials.password,
       );
     } catch (error) {
-      console.error(error);
+      console.error('[AuthController:signin] →', error);
       throw new InternalServerErrorException(
         'Error inesperado al intentar iniciar sesión',
       );
@@ -34,13 +36,20 @@ export class AuthsController {
 
   @Post('signup')
   @HttpCode(201)
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  @UsePipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  )
   async signup(@Body() newUser: SignUpDto) {
     try {
       return await this.authService.signup(newUser);
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.error('[AuthController:signup] →', error);
+      throw new InternalServerErrorException(
+        'Error inesperado al intentar registrarse',
+      );
     }
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserRole } from './Entities/user.entity';
+import { User } from './Entities/user.entity';
 import { Repository } from 'typeorm';
 import {
   CreateUserDto,
@@ -39,6 +39,7 @@ export class UserService {
         'user.country',
         'user.address',
         'user.city',
+        'user.isAdmin',
         'order.id',
         'order.date',
       ])
@@ -60,7 +61,7 @@ export class UserService {
   async createUserService(dto: CreateUserDto): Promise<IUserResponseDto> {
     const userEntity = this.userRepository.create({
       ...dto,
-      role: UserRole.USER,
+      isAdmin: false,
     });
     const savedUser = await this.userRepository.save(userEntity);
     return ResponseUserDto.toDTO(savedUser);
@@ -70,7 +71,7 @@ export class UserService {
     id: string,
     dto: Partial<UpdateUserDto>,
   ): Promise<IUserResponseDto> {
-    if ('role' in dto) delete dto.role;
+    if ('isAdmin' in dto) delete dto.isAdmin;
 
     await this.userRepository.update({ id }, dto);
     const updatedUser = await this.userRepository.findOne({

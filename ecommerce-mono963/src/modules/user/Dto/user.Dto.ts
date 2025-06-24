@@ -6,11 +6,12 @@ import {
   MinLength,
   MaxLength,
   Matches,
-  IsEnum,
+  IsBoolean,
 } from 'class-validator';
-import { User, UserRole } from '../Entities/user.entity';
+import { User } from '../Entities/user.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+// DTO para creación
 export class CreateUserDto {
   @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
@@ -44,12 +45,13 @@ export class CreateUserDto {
   @IsString()
   city?: string;
 
-  @ApiPropertyOptional({ enum: UserRole, default: UserRole.USER })
+  @ApiPropertyOptional({ example: 'Buenos Aires' })
   @IsOptional()
-  @IsEnum(UserRole)
-  role?: UserRole;
+  @IsBoolean()
+  isAdmin?: boolean;
 }
 
+// DTO para actualizaciones
 export class UpdateUserDto {
   @ApiPropertyOptional({ example: 'Juan Actualizado' })
   @IsOptional()
@@ -124,19 +126,19 @@ export class ResponseUserDto {
   }
 }
 
-export interface IUserResponseWithRoleDto extends IUserResponseDto {
-  role: UserRole;
+export interface IUserResponseWithAdmin extends IUserResponseDto {
+  isAdmin: boolean;
 }
 
-export class ResponseUserWithRoleDto {
-  static toDTO(user: User): IUserResponseWithRoleDto {
+export class ResponseUserWithAdminDto {
+  static toDTO(user: User): IUserResponseWithAdmin {
     return {
       ...ResponseUserDto.toDTO(user),
-      role: user.role,
+      isAdmin: user.isAdmin,
     };
   }
 
-  static toDTOList(users: User[]): IUserResponseWithRoleDto[] {
+  static toDTOList(users: User[]): IUserResponseWithAdmin[] {
     return users.map((user) => this.toDTO(user));
   }
 }

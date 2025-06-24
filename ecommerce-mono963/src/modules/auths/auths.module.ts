@@ -1,10 +1,11 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
+
 import { UsersModule } from '../user/users.module';
 import { AuthsService } from './auths.service';
 import { AuthsController } from './auths.controller';
 import { AuthGuard } from 'src/guards/auth.guards';
-import * as dotenv from 'dotenv';
 
 dotenv.config({ path: '.env.development' });
 

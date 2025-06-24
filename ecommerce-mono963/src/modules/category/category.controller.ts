@@ -1,18 +1,20 @@
 import {
   Controller,
-  HttpCode,
-  Post,
-  InternalServerErrorException,
   Get,
+  Post,
   Body,
+  HttpCode,
   HttpStatus,
   UseGuards,
+  InternalServerErrorException,
 } from '@nestjs/common';
-import { CategoriesService } from './category.service';
-import { Category } from './entities/category.entity';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { AuthGuard } from 'src/guards/auth.guards';
 import { ApiTags } from '@nestjs/swagger';
+
+import { CategoriesService } from './category.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { Category } from './entities/category.entity';
+
+import { AuthGuard } from 'src/guards/auth.guards';
 import { RoleGuard } from 'src/guards/auth.guards.admin';
 import { Roles } from 'src/decorator/role.decorator';
 import { UserRole } from '../user/Entities/user.entity';
@@ -23,6 +25,9 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(AuthGuard, RoleGuard)
+  @Roles(UserRole.ADMIN)
   getAll(): Promise<Category[]> {
     return this.categoriesService.getCategories();
   }
@@ -36,14 +41,14 @@ export class CategoriesController {
   }
 
   @Post('seeder')
-  @HttpCode(201)
+  @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
-  async seedCategories() {
+  async seedCategories(): Promise<{ message: string; data?: Category[] }> {
     try {
       return await this.categoriesService.preloadCategories();
     } catch (error) {
-      console.error(error);
+      console.error('[CategoriesController:seedCategories] →', error);
       throw new InternalServerErrorException(
         'Error al precargar las categorías',
       );

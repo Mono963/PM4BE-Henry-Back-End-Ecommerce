@@ -3,11 +3,11 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { UserService } from '../user/users.service';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+
+import { UserService } from '../user/users.service';
 import { SignUpDto } from './Dto/auths.Dto';
-import { UserRole } from '../user/Entities/user.entity';
 
 @Injectable()
 export class AuthsService {
@@ -22,6 +22,7 @@ export class AuthsService {
     }
 
     const user = await this.userService.findByEmail(email);
+
     const isMatch = user && (await bcrypt.compare(password, user.password));
 
     if (!user || !isMatch) {
@@ -32,19 +33,19 @@ export class AuthsService {
       sub: user.id,
       email: user.email,
       name: user.name,
-      role: user.role, // 🔥 Este era el que te faltaba
+      isAdmin: user.isAdmin,
     };
 
-    const token = await this.jwtService.signAsync(payload);
+    const accessToken = await this.jwtService.signAsync(payload);
 
     return {
-      accessToken: token,
+      accessToken,
       expiresIn: 3600,
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        isAdmin: user.isAdmin,
       },
     };
   }
@@ -65,11 +66,12 @@ export class AuthsService {
       const createdUser = await this.userService.createUserService({
         ...rest,
         password: hashedPassword,
-        role: UserRole.USER,
+        isAdmin: false,
       });
+
       return createdUser;
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (err) {
+      console.error('[AuthsService:signup] →', err);
       throw new InternalServerErrorException('Error al registrar usuario');
     }
   }

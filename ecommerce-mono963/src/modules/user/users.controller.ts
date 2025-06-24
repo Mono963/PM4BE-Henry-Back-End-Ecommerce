@@ -19,7 +19,7 @@ import {
 import { UserService } from './users.service';
 import {
   ResponseUserDto,
-  ResponseUserWithRoleDto,
+  ResponseUserWithAdminDto,
   UpdateUserDto,
 } from './Dto/user.Dto';
 import { AuthGuard } from 'src/guards/auth.guards';
@@ -47,7 +47,7 @@ export class UsersController {
       const pageNumber = page ? Number(page) : undefined;
       const limitNumber = limit ? Number(limit) : undefined;
       const users = await this.userService.getUsers(pageNumber, limitNumber);
-      return ResponseUserWithRoleDto.toDTOList(users);
+      return ResponseUserWithAdminDto.toDTOList(users);
     } catch (error) {
       console.error(error);
       throw new InternalServerErrorException('Error al obtener los usuarios');

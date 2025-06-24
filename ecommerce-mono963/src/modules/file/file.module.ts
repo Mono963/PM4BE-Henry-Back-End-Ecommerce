@@ -1,11 +1,14 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { FileService } from './file.service';
 import { FileController } from './file.controller';
-import { ProductsModule } from '../products/products.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { File } from './entities/file.entity';
-import { CloudinaryProvider } from 'src/config/cloudinary';
+
+import { ProductsModule } from '../products/products.module';
 import { AuthsModule } from '../auths/auths.module';
+
+import { CloudinaryProvider } from 'src/config/cloudinary';
 
 @Module({
   imports: [

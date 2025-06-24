@@ -9,14 +9,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+
 import { FileService } from './file.service';
 import { FileValidationPipe } from 'src/common/pipes/file-validation.pipe';
+import { FileResponseDto, UploadImageDto } from './dto/file.Dto';
+
 import { AuthGuard } from 'src/guards/auth.guards';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoleGuard } from 'src/guards/auth.guards.admin';
 import { Roles } from 'src/decorator/role.decorator';
 import { UserRole } from '../user/Entities/user.entity';
-import { FileResponseDto, UploadImageDto } from './dto/file.Dto';
 
 @ApiTags('File')
 @Controller('files')

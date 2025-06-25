@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpCode,
+  HttpStatus,
   InternalServerErrorException,
   Post,
   UsePipes,
@@ -18,7 +19,7 @@ export class AuthsController {
   constructor(private readonly authService: AuthsService) {}
 
   @Post('signin')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.CREATED)
   @ApiBody({ type: SignInDto })
   async signin(@Body() credentials: SignInDto) {
     try {
@@ -35,7 +36,7 @@ export class AuthsController {
   }
 
   @Post('signup')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @UsePipes(
     new ValidationPipe({
       whitelist: true,

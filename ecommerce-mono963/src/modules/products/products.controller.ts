@@ -15,6 +15,7 @@ import {
   BadRequestException,
   NotFoundException,
   InternalServerErrorException,
+  HttpStatus,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDto } from './Dto/products.Dto';
@@ -22,7 +23,7 @@ import { AuthGuard } from '../../guards/auth.guards';
 import { RoleGuard } from 'src/guards/auth.guards.admin';
 import { Roles } from 'src/decorator/role.decorator';
 import { UserRole } from '../user/Entities/user.entity';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Products')
 @Controller('products')
@@ -31,7 +32,7 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async getProducts(
     @Query('page') page?: string,
@@ -49,7 +50,7 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   async getProductById(@Param('id', ParseUUIDPipe) id: string) {
@@ -67,7 +68,7 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @Post('seeder')
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   async seedProducts() {
@@ -83,7 +84,7 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -98,7 +99,8 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @HttpCode(200)
+  @ApiBody({ type: UpdateProductDto })
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -118,7 +120,7 @@ export class ProductsController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   async deleteProduct(@Param('id', ParseUUIDPipe) id: string) {

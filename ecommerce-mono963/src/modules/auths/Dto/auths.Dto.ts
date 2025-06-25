@@ -10,45 +10,45 @@ import {
 } from 'class-validator';
 
 export class SignUpDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
   @MinLength(3)
   @MaxLength(80)
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'juan@example.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'MiC0ntra$eñaSegura' })
   @IsString()
   @MinLength(8)
   @MaxLength(255)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/)
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'MiC0ntra$eñaSegura' })
   @IsString()
   confirmPassword: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'Av. Siempre Viva 742' })
   @IsString()
   @MinLength(3)
   @MaxLength(80)
   address: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 1134567890 })
   @IsNumber()
   phone: number;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 'Argentina' })
   @IsOptional()
   @IsString()
   @MinLength(5)
   @MaxLength(20)
   country?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: 'Buenos Aires' })
   @IsOptional()
   @IsString()
   @MinLength(5)

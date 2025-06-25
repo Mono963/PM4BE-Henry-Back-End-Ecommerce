@@ -15,6 +15,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
   Req,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import {
@@ -27,7 +28,7 @@ import { Request } from 'express';
 import { RoleGuard } from 'src/guards/auth.guards.admin';
 import { UserRole } from './Entities/user.entity';
 import { Roles } from 'src/decorator/role.decorator';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('users')
@@ -36,7 +37,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get()
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   async getUsersRole(
@@ -56,7 +57,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Get(':id')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async getUserById(@Param('id', ParseUUIDPipe) id: string) {
     try {
@@ -79,7 +80,8 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Put(':id')
-  @HttpCode(200)
+  @ApiBody({ type: UpdateUserDto })
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async updateUser(
@@ -98,7 +100,7 @@ export class UsersController {
 
   @ApiBearerAuth()
   @Delete(':id')
-  @HttpCode(200)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async deleteUser(@Param('id', ParseUUIDPipe) id: string) {
     try {

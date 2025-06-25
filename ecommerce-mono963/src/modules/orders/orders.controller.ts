@@ -11,6 +11,7 @@ import {
   NotFoundException,
   ParseUUIDPipe,
   UseGuards,
+  HttpStatus,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './Dto/order.Dto';
@@ -24,7 +25,7 @@ export class OrdersController {
 
   @ApiBearerAuth()
   @Post()
-  @HttpCode(201)
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async createOrder(@Body() createOrderDto: CreateOrderDto) {
@@ -40,6 +41,7 @@ export class OrdersController {
 
   @ApiBearerAuth()
   @Get(':id')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   async getOrderById(@Param('id', ParseUUIDPipe) id: string) {
     try {

@@ -28,6 +28,9 @@ export class Product {
   @Column('int')
   stock: number;
 
+  @Column('text', { array: true, default: () => 'ARRAY[]::text[]' })
+  imgUrls: string[];
+
   @OneToMany(() => File, (file) => file.product)
   files: File[];
 

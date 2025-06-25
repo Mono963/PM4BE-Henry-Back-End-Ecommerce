@@ -10,6 +10,7 @@ import { OrderDetail } from './Entities/orderDetails.entity';
 import { User } from '../user/Entities/user.entity';
 import { Product } from '../products/Entities/products.entity';
 import { CreateOrderDto } from './Dto/order.Dto';
+import { IUserResponseDto, ResponseUserDto } from '../user/Dto/user.Dto';
 
 @Injectable()
 export class OrdersService {
@@ -27,7 +28,9 @@ export class OrdersService {
     private readonly productRepo: Repository<Product>,
   ) {}
 
-  async getOrder(id: string): Promise<Order> {
+  async getOrder(
+    id: string,
+  ): Promise<Omit<Order, 'user'> & { user: IUserResponseDto }> {
     const order = await this.orderRepo.findOne({
       where: { id },
       relations: ['user', 'detail', 'detail.products'],
@@ -37,7 +40,11 @@ export class OrdersService {
       throw new NotFoundException(`Orden con id ${id} no encontrada`);
     }
 
-    return order;
+    const userDto = ResponseUserDto.toDTO(order.user);
+    return {
+      ...order,
+      user: userDto,
+    };
   }
 
   async addOrder(createOrderDto: CreateOrderDto): Promise<Order> {

@@ -11,7 +11,6 @@ import {
 import { User } from '../Entities/user.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-// DTO para creación
 export class CreateUserDto {
   @ApiProperty({ example: 'Juan Pérez' })
   @IsString()
@@ -51,7 +50,6 @@ export class CreateUserDto {
   isAdmin?: boolean;
 }
 
-// DTO para actualizaciones
 export class UpdateUserDto {
   @ApiPropertyOptional({ example: 'Juan Actualizado' })
   @IsOptional()

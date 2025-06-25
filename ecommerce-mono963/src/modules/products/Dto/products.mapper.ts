@@ -9,10 +9,6 @@ export function mapToProductDto(product: Product): ResponseProductDto {
     price: Number(product.price),
     stock: product.stock,
     category_name: product.category?.categoryName ?? '',
-    files:
-      product.files?.map((file) => ({
-        id: file.id,
-        url: file.url,
-      })) ?? [],
+    imgUrls: product.imgUrls ?? [],
   };
 }

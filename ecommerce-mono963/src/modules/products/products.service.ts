@@ -138,4 +138,8 @@ export class ProductsService {
 
     return product;
   }
+
+  async saveProductEntity(product: Product): Promise<void> {
+    await this.productRepo.save(product);
+  }
 }

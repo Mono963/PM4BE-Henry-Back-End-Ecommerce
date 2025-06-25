@@ -9,7 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { FileService } from './file.service';
 import { FileValidationPipe } from 'src/common/pipes/file-validation.pipe';
@@ -30,6 +36,7 @@ export class FileController {
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UploadImageDto })
   @ApiResponse({
     status: 201,

@@ -57,6 +57,14 @@ export class FileService {
 
     await this.fileRepo.save(image);
 
+    const updatedFiles = await this.fileRepo.find({
+      where: { product: { id: product.id } },
+    });
+
+    product.imgUrls = updatedFiles.map((file) => file.url);
+
+    await this.productService.saveProductEntity(product);
+
     return { id: image.id, url: image.url };
   }
 

@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsNumber, IsOptional, Min, Length } from 'class-validator';
-import { FileResponseDto } from 'src/modules/file/dto/file.Dto';
 
 export class CreateProductDto {
   @ApiProperty({ example: 'Remera básica' })
@@ -68,5 +67,5 @@ export class ResponseProductDto {
   price: number;
   stock: number;
   category_name: string;
-  files: FileResponseDto[];
+  imgUrls: string[];
 }

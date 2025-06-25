@@ -20,7 +20,6 @@ async function bootstrap() {
     .setDescription('Api de prueba')
     .setVersion('1.0.0')
     .addBearerAuth()
-    .addBasicAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);

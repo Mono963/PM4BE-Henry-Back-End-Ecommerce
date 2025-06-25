@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
 
 export class FileResponseDto {
   @ApiProperty({
@@ -22,6 +21,5 @@ export class UploadImageDto {
     format: 'binary',
     description: 'Archivo de imagen a subir (JPG, PNG, etc.)',
   })
-  @IsOptional()
   file?: any;
 }

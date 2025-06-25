@@ -8,7 +8,7 @@ import {
   UseGuards,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CategoriesService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -24,15 +24,18 @@ import { UserRole } from '../user/Entities/user.entity';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @ApiBearerAuth()
   @Get()
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   getAll(): Promise<Category[]> {
     return this.categoriesService.getCategories();
   }
 
+  @ApiBearerAuth()
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
@@ -40,7 +43,9 @@ export class CategoriesController {
     return this.categoriesService.createCategory(dto);
   }
 
+  @ApiBearerAuth()
   @Post('seeder')
+  @HttpCode(HttpStatus.CREATED)
   @UseGuards(AuthGuard, RoleGuard)
   @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)

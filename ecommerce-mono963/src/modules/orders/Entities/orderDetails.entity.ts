@@ -7,7 +7,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Order } from './order.entity';
-import { Product } from 'src/modules/products/Entities/products.entity';
+import { Product } from '../../products/Entities/products.entity';
 
 @Entity('order_details')
 export class OrderDetail {

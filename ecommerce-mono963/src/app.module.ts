@@ -9,6 +9,7 @@ import typeOrmConfig from './config/typeorm';
 import { DataSourceOptions } from 'typeorm';
 import { CategoriesModule } from './modules/category/category.module';
 import { FileModule } from './modules/file/file.module';
+import { AuthsModule } from './modules/auths/auths.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +31,7 @@ import { FileModule } from './modules/file/file.module';
     OrdersModule,
     CategoriesModule,
     FileModule,
+    AuthsModule,
   ],
   controllers: [],
   providers: [],

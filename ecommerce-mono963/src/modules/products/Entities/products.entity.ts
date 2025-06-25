@@ -1,4 +1,4 @@
-import { Category } from 'src/modules/category/entities/category.entity';
+import { Category } from 'src/modules/category/Entities/category.entity';
 import { File } from 'src/modules/file/entities/file.entity';
 import { OrderDetail } from 'src/modules/orders/Entities/orderDetails.entity';
 import {

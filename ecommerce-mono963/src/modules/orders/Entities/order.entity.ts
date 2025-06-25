@@ -6,7 +6,7 @@ import {
   OneToOne,
   JoinColumn,
 } from 'typeorm';
-import { User } from 'src/modules/user/Entities/user.entity';
+import { User } from '../../user/Entities/user.entity';
 import { OrderDetail } from './orderDetails.entity';
 
 @Entity('orders')

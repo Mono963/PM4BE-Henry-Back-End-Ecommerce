@@ -12,7 +12,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CategoriesService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { Category } from './entities/category.entity';
+import { Category } from './Entities/category.entity';
 
 import { AuthGuard } from 'src/guards/auth.guards';
 import { RoleGuard } from 'src/guards/auth.guards.admin';

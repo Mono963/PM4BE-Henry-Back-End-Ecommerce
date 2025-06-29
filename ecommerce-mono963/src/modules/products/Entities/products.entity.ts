@@ -1,6 +1,6 @@
-import { Category } from 'src/modules/category/Entities/category.entity';
-import { File } from 'src/modules/file/entities/file.entity';
-import { OrderDetail } from 'src/modules/orders/Entities/orderDetails.entity';
+import { Category } from '../../category/entities/category.entity';
+import { File } from '../../file/entities/file.entity';
+import { OrderDetail } from '../../orders/Entities/orderDetails.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

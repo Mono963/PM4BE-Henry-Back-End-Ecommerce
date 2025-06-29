@@ -23,11 +23,11 @@ import {
   ResponseUserWithAdminDto,
   UpdateUserDto,
 } from './Dto/user.Dto';
-import { AuthGuard } from 'src/guards/auth.guards';
+import { AuthGuard } from '../../guards/auth.guards';
 import { Request } from 'express';
-import { RoleGuard } from 'src/guards/auth.guards.admin';
+import { RoleGuard } from '../../guards/auth.guards.admin';
 import { UserRole } from './Entities/user.entity';
-import { Roles } from 'src/decorator/role.decorator';
+import { Roles } from '../../decorator/role.decorator';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')

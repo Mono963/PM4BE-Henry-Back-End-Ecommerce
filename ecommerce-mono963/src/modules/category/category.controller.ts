@@ -7,16 +7,17 @@ import {
   HttpStatus,
   UseGuards,
   InternalServerErrorException,
+  Param,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CategoriesService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { Category } from './Entities/category.entity';
+import { Category } from './entities/category.entity';
 
-import { AuthGuard } from 'src/guards/auth.guards';
-import { RoleGuard } from 'src/guards/auth.guards.admin';
-import { Roles } from 'src/decorator/role.decorator';
+import { AuthGuard } from '../../guards/auth.guards';
+import { RoleGuard } from '../../guards/auth.guards.admin';
+import { Roles } from '../../decorator/role.decorator';
 import { UserRole } from '../user/Entities/user.entity';
 
 @ApiTags('Category')
@@ -27,8 +28,6 @@ export class CategoriesController {
   @ApiBearerAuth()
   @Get()
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard, RoleGuard)
-  @Roles(UserRole.ADMIN)
   getAll(): Promise<Category[]> {
     return this.categoriesService.getCategories();
   }
@@ -41,6 +40,14 @@ export class CategoriesController {
   @HttpCode(HttpStatus.CREATED)
   create(@Body() dto: CreateCategoryDto): Promise<Category> {
     return this.categoriesService.createCategory(dto);
+  }
+
+  @ApiBearerAuth()
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  getById(@Param('id') id: string) {
+    const category = this.categoriesService.getByIdCategory(id);
+    return category;
   }
 
   @ApiBearerAuth()

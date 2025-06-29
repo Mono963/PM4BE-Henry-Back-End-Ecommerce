@@ -20,8 +20,8 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto, UpdateProductDto } from './Dto/products.Dto';
 import { AuthGuard } from '../../guards/auth.guards';
-import { RoleGuard } from 'src/guards/auth.guards.admin';
-import { Roles } from 'src/decorator/role.decorator';
+import { RoleGuard } from '../../guards/auth.guards.admin';
+import { Roles } from '../../decorator/role.decorator';
 import { UserRole } from '../user/Entities/user.entity';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 

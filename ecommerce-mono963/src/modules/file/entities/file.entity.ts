@@ -5,7 +5,7 @@ import {
   ManyToOne,
   CreateDateColumn,
 } from 'typeorm';
-import { Product } from 'src/modules/products/Entities/products.entity';
+import { Product } from '../../products/Entities/products.entity';
 
 @Entity('files')
 export class File {

@@ -8,7 +8,7 @@ import { File } from './entities/file.entity';
 import { ProductsModule } from '../products/products.module';
 import { AuthsModule } from '../auths/auths.module';
 
-import { CloudinaryProvider } from 'src/config/cloudinary';
+import { CloudinaryProvider } from '../../config/cloudinary';
 
 @Module({
   imports: [

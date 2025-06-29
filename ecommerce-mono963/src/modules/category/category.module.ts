@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Category } from './Entities/category.entity';
+import { Category } from './entities/category.entity';
 import { CategoriesController } from './category.controller';
 import { CategoriesService } from './category.service';
 

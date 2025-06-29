@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { DataSource } from 'typeorm';
 
 describe('UsersController & AuthController (e2e)', () => {
   let app: INestApplication;
@@ -9,11 +10,12 @@ describe('UsersController & AuthController (e2e)', () => {
   let createdUserId: string;
 
   const testUser = {
-    name: 'MonoTest',
-    email: 'monotest@example.com',
-    password: '123456',
-    phone: 123456789,
-    country: 'AR',
+    name: 'MonoTestt',
+    email: 'monotest@examplee.com',
+    password: 'MiC0ntra$eña',
+    confirmPassword: 'MiC0ntra$eña',
+    phone: 1234567810,
+    country: 'Argentina',
     address: 'Fake Street',
     city: 'Buenos Aires',
   };
@@ -24,7 +26,7 @@ describe('UsersController & AuthController (e2e)', () => {
   }
 
   interface SigninResponse {
-    access_token: string;
+    accessToken: string;
   }
 
   beforeAll(async () => {
@@ -42,10 +44,23 @@ describe('UsersController & AuthController (e2e)', () => {
     );
 
     await app.init();
+
+    const dataSource = app.get(DataSource);
+
+    // 🧨 Orden correcto de borrado según dependencias
+    await dataSource.query(
+      `DELETE FROM "products_order_details_order_details"`,
+    );
+    await dataSource.query(`DELETE FROM "order_details_products_products"`); // si existe
+    await dataSource.query(`DELETE FROM "orders"`);
+    await dataSource.query(`DELETE FROM "order_details"`);
+    await dataSource.query(`DELETE FROM "files"`);
+    await dataSource.query(`DELETE FROM "products"`);
+    await dataSource.query(`DELETE FROM "categories"`);
+    await dataSource.query(`DELETE FROM "users"`);
   });
 
   it('POST /auth/signup → 201 crea un usuario', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const res = await request(app.getHttpServer())
       .post('/auth/signup')
       .send(testUser);
@@ -60,7 +75,6 @@ describe('UsersController & AuthController (e2e)', () => {
   });
 
   it('POST /auth/signin → 201 retorna JWT', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const res = await request(app.getHttpServer()).post('/auth/signin').send({
       email: testUser.email,
       password: testUser.password,
@@ -69,13 +83,12 @@ describe('UsersController & AuthController (e2e)', () => {
     const body = res.body as SigninResponse;
 
     expect(res.status).toBe(201);
-    expect(body).toHaveProperty('access_token');
+    expect(body).toHaveProperty('accessToken'); // 🛠️ propiedad corregida
 
-    accessToken = `Bearer ${body.access_token}`;
+    accessToken = `Bearer ${body.accessToken}`;
   });
 
   it('GET /users/:id → 200 si el usuario existe', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const res = await request(app.getHttpServer())
       .get(`/users/${createdUserId}`)
       .set('Authorization', accessToken);
@@ -85,7 +98,6 @@ describe('UsersController & AuthController (e2e)', () => {
   });
 
   it('PUT /users/:id → 200 al actualizar', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const res = await request(app.getHttpServer())
       .put(`/users/${createdUserId}`)
       .set('Authorization', accessToken)
@@ -96,7 +108,6 @@ describe('UsersController & AuthController (e2e)', () => {
   });
 
   it('DELETE /users/:id → 200 al eliminar', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const res = await request(app.getHttpServer())
       .delete(`/users/${createdUserId}`)
       .set('Authorization', accessToken);

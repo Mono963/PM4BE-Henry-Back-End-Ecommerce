@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Category } from './Entities/category.entity';
+import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { PRODUCTS_SEED } from '../products/data/products.data';
 
@@ -60,5 +60,12 @@ export class CategoriesService {
       categoryName: dto.categoryName,
     });
     return this.categoryRepo.save(category);
+  }
+  async getByIdCategory(id: string): Promise<Category | null> {
+    const exist = await this.categoryRepo.findOneBy({ id });
+    if (!exist) {
+      throw new Error('La categoria no existe');
+    }
+    return exist;
   }
 }

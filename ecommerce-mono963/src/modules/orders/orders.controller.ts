@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './Dto/order.Dto';
-import { AuthGuard } from 'src/guards/auth.guards';
+import { AuthGuard } from '../../guards/auth.guards';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Order')

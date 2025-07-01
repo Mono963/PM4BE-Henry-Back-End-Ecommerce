@@ -25,7 +25,7 @@ jobs:
              uses: docker/build-push-action@v5
              with: 
                context: .
-               file: ./dockerFile
+               file: ./dockerfile
                push: true
                tags: docker-ecommerce:latest
                   

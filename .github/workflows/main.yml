@@ -25,6 +25,6 @@ jobs:
         uses: docker/build-push-action@v5
         with: 
           context: .
-          file: ./Dockerfile
+          file: ./ecommerce-mono963/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_NAME }}/docker-ecommerce:latest

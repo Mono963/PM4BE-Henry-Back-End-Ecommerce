@@ -11,6 +11,7 @@ const config = {
   port: Number(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
+  url: process.env.SUPABASE_URL,
   autoLoadEntities: true,
   synchronize: false,
   logging: true,

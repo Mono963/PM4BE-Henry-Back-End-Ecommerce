@@ -13,7 +13,7 @@ dotenv.config({ path: '.env.development' });
   imports: [
     forwardRef(() => UsersModule),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.SUPABASE_JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
   ],

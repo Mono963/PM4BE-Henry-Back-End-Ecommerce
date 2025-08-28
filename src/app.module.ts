@@ -10,9 +10,8 @@ import { CategoriesModule } from './modules/category/category.module';
 import { FileModule } from './modules/file/file.module';
 import { AuthsModule } from './modules/auths/auths.module';
 import { UsersModule } from './modules/users/users.module';
-import { CartModule } from './src/modules/cart/cart/cart.module';
-import { CartModule } from './src/modules/cart/cart.module';
 import { CartModule } from './modules/cart/cart.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({

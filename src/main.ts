@@ -39,12 +39,12 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document);
 
-  const port = process.env.PORT ?? 3000;
+  const port = process.env.PORT ?? 3001;
   await app.listen(port);
 
-  logger.log(`🚀 Frontend corriendo en https://frontend-rootscoop.vercel.app`);
-  logger.log(`📚 Swagger en https://roots-api-te93.onrender.com/api/docs`);
-  logger.log(`📚 Swagger en http://localhost:3000/api/docs`);
+  logger.log(`🚀 Frontend corriendo en`);
+  logger.log(`📚 Swagger en `);
+  logger.log(`📚 Swagger en http://localhost:3001/api/docs`);
 }
 
 bootstrap().catch((error) => {

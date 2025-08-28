@@ -8,5 +8,5 @@ export class PaginatedUsersDto extends PaginatedResponseDto<ResponseUserWithAdmi
     type: 'array',
     items: { $ref: getSchemaPath(ResponseUserWithAdminDto) },
   })
-  items: ResponseUserWithAdminDto[];
+  declare items: ResponseUserWithAdminDto[];
 }

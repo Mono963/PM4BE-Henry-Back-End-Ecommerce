@@ -1,21 +1,21 @@
 import { registerAs } from '@nestjs/config';
+import { config as dotenvConfig } from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
-const isProduction = process.env.NODE_ENV === 'production';
+dotenvConfig({ path: '.env.development' });
 
 const config = {
   type: 'postgres',
-  url: process.env.DATABASE_URL,
-  ssl: isProduction
-    ? {
-        rejectUnauthorized: false,
-      }
-    : false,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  port: Number(process.env.DB_PORT),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
   autoLoadEntities: true,
-  synchronize: false,
+  synchronize: true,
   logging: true,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  migrations: ['dist/src/migrations/*{.ts,.js}'],
+  migrations: ['dist/migrations/*{.ts,.js}'],
 };
 
 export default registerAs('typeorm', () => config);

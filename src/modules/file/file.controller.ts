@@ -23,8 +23,7 @@ import { FileResponseDto, UploadImageDto } from './dto/file.Dto';
 
 import { AuthGuard } from '../../guards/auth.guards';
 import { RoleGuard } from '../../guards/auth.guards.admin';
-import { Roles } from '../../decorator/role.decorator';
-import { UserRole } from '../user/Entities/user.entity';
+import { Roles, UserRole } from '../../decorator/role.decorator';
 
 @ApiTags('File')
 @Controller('files')
